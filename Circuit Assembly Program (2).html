@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>"Hear What the Spirit Says to the Congregations" - Circuit Assembly Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .header .scripture {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .session {
+            margin-bottom: 50px;
+        }
+
+        .session-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .session-title::before {
+            content: "☀️";
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .afternoon .session-title::before {
+            content: "🌤️";
+        }
+
+        .program-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .program-table tr {
+            border-bottom: 1px solid #e2e8f0;
+            transition: background 0.2s;
+        }
+
+        .program-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .program-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .program-table td {
+            padding: 18px 20px;
+        }
+
+        .program-table td:first-child {
+            font-weight: 600;
+            color: #667eea;
+            width: 100px;
+            font-size: 1.05em;
+        }
+
+        .program-table td:last-child {
+            color: #2d3748;
+            font-size: 1.05em;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #fef5e7 0%, #fdebd0 100%);
+            font-weight: 600;
+        }
+
+        .songs-section {
+            background: linear-gradient(135deg, #e8f4f8 0%, #dbe9f0 100%);
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .songs-section h3 {
+            color: #2c5282;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .songs-section ul {
+            list-style: none;
+        }
+
+        .songs-section li {
+            padding: 10px 0;
+            color: #2d3748;
+            font-size: 1.05em;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .songs-section li::before {
+            content: "♪";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .symposium {
+            background: linear-gradient(135deg, #fef3e7 0%, #fce3c6 100%);
+            padding: 20px 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .symposium h3 {
+            color: #8b5a00;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .symposium ul {
+            list-style: none;
+            padding-left: 15px;
+        }
+
+        .symposium li {
+            padding: 8px 0;
+            color: #2d3748;
+            font-size: 1.05em;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .symposium li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #d97706;
+            font-size: 1.5em;
+            line-height: 1;
+        }
+
+        .footer {
+            background: #f7fafc;
+            padding: 25px 30px;
+            text-align: center;
+            color: #4a5568;
+            font-size: 0.95em;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .assembly-info {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-field label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 1.05em;
+        }
+
+        .info-field input {
+            padding: 12px 15px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .info-field input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .illustration {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            border-left: 5px solid #f59e0b;
+        }
+
+        .questions-section {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border-left: 5px solid #10b981;
+        }
+
+        .questions-section h3 {
+            color: #065f46;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .question-item {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .question-text {
+            font-size: 1.15em;
+            color: #1f2937;
+            margin-bottom: 15px;
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .scripture-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .scripture-links a {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            border: 1px solid #bfdbfe;
+            transition: all 0.2s;
+        }
+
+        .scripture-links a:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            transform: translateY(-2px);
+        }
+
+        .notes-area {
+            margin-top: 15px;
+        }
+
+        .notes-area label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .notes-area textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+
+        .notes-area textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .key-takeaways {
+            background: linear-gradient(135deg, #fef3e7 0%, #fde3c6 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border-left: 5px solid #f59e0b;
+        }
+
+        .key-takeaways h3 {
+            color: #92400e;
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .takeaway-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .takeaway-item textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.6;
+            transition: border-color 0.3s;
+        }
+
+        .takeaway-item textarea:focus {
+            outline: none;
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        .talk-notes {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.95em;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.5;
+            transition: border-color 0.3s;
+            background: #f9fafb;
+        }
+
+        .talk-notes:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .program-table td {
+            padding: 18px 20px;
+            vertical-align: top;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .session-title {
+                font-size: 1.2em;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            .program-table td {
+                padding: 12px 15px;
+                font-size: 0.95em;
+            }
+
+            .program-table td:first-child {
+                width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>"Hear What the Spirit Says to the Congregations"</h1>
+            <div class="scripture">REVELATION 3:22</div>
+            <div class="scripture" style="margin-top: 5px; font-size: 0.9em; opacity: 0.8;">2025-2026 Circuit Assembly Program With Branch Representative</div>
+        </div>
+
+        <div class="content">
+            <!-- Assembly Information -->
+            <div class="assembly-info">
+                <h3 style="color: #4a5568; margin-bottom: 20px; font-size: 1.3em;">Assembly Information</h3>
+                <div class="info-grid">
+                    <div class="info-field">
+                        <label>Date:</label>
+                        <input type="text" placeholder="Enter assembly date">
+                    </div>
+                    <div class="info-field">
+                        <label>Congregation:</label>
+                        <input type="text" placeholder="Enter congregation name">
+                    </div>
+                    <div class="info-field">
+                        <label>Location:</label>
+                        <input type="text" placeholder="Enter assembly hall location">
+                    </div>
+                    <div class="info-field">
+                        <label>Branch Representative:</label>
+                        <input type="text" placeholder="Enter speaker name">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Illustration -->
+            <div class="illustration">
+                <h3 style="color: #667eea; margin-bottom: 15px;">Program Theme Illustration</h3>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 1.05em;">
+                    <strong>Image Description:</strong> A collage showing two scenes: 1. Jesus holding seven stars in his right hand, representing the congregations. 2. A brother sitting at an outdoor table, studying with a smartphone and notebook—demonstrating how we hear what the spirit says through diligent study of God's Word.
+                </p>
+            </div>
+
+            <!-- Morning Session -->
+            <div class="session morning">
+                <div class="session-title">Morning Session</div>
+                
+                <table class="program-table">
+                    <tr>
+                        <td>9:40</td>
+                        <td>
+                            <div style="font-weight: 500;">Music</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>9:50</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Song No. 1 and Prayer</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10:00</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">"Hear What the Spirit Says"—How?</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10:15</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">"You . . . Have Not Grown Weary"</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10:30</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">"Do Not Be Afraid"</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>10:55</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Song No. 73 and Announcements</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>11:05</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">"You Did Not Deny Your Faith in Me"</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr class="highlight">
+                        <td>11:35</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;"><strong>Baptism:</strong> The Meaning of Your Baptism</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>12:05</td>
+                        <td>
+                            <div style="font-weight: 500;">Song No. 79</div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="songs-section">
+                    <h3>Songs Referenced</h3>
+                    <ul>
+                        <li><strong>Song No. 1:</strong> Jehovah's Attributes</li>
+                        <li><strong>Song No. 73:</strong> Grant Us Boldness</li>
+                        <li><strong>Song No. 79:</strong> Prayer: Stand Firm</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Afternoon Session -->
+            <div class="session afternoon">
+                <div class="session-title">Afternoon Session</div>
+                
+                <table class="program-table">
+                    <tr>
+                        <td>1:20</td>
+                        <td>
+                            <div style="font-weight: 500;">Music</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1:30</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Song No. 126</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1:35</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Experiences</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>1:45</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Summary of The Watchtower</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr class="highlight">
+                        <td>2:15</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;"><strong>Symposium:</strong> How to Apply the Counsel</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this symposium..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3:00</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Song No. 76 and Announcements</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3:10</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">"Be Zealous"</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this talk..."></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3:55</td>
+                        <td>
+                            <div style="font-weight: 500; margin-bottom: 10px;">Song No. 129 and Prayer</div>
+                            <textarea class="talk-notes" placeholder="Add notes for this part..."></textarea>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="symposium">
+                    <h3>Symposium Details: How to Apply the Counsel</h3>
+                    <ul>
+                        <li>"Hold Fast to What You Have"</li>
+                        <li>"Become Watchful, and Strengthen the Things Remaining"</li>
+                        <li>"I Have Set Before You an Opened Door"</li>
+                    </ul>
+                </div>
+
+                <div class="songs-section">
+                    <h3>Songs Referenced</h3>
+                    <ul>
+                        <li><strong>Song No. 126:</strong> Stay Awake, Stand Firm, Grow Mighty</li>
+                        <li><strong>Song No. 76:</strong> How Does It Make You Feel?</li>
+                        <li><strong>Song No. 129:</strong> Keep Enduring</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Study Questions Section -->
+            <div class="questions-section">
+                <h3>Find Answers to These Questions</h3>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">1</span>
+                        How can we "hear what the spirit says"?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66001003-66001011&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 1:3,10,11</a>
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66003019&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 3:19</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">2</span>
+                        What will help us to continue working hard and enduring?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66002004&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 2:4</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">3</span>
+                        How can we prepare to endure persecution with courage?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=20029025&pub=nwtsty" target="_blank" rel="noopener noreferrer">Proverbs 29:25</a>
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66002010-66002011&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 2:10,11</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">4</span>
+                        How can we avoid denying our faith in Jesus?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66002012-66002016&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 2:12-16</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">5</span>
+                        How can we keep holding fast to what we have?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66002024-66002025&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 2:24,25</a>
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66003001-66003011&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 3:1-3,7,8,10,11</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+
+                <div class="question-item">
+                    <div class="question-text">
+                        <span class="question-number">6</span>
+                        What will help us to remain zealous?
+                    </div>
+                    <div class="scripture-links">
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=66003014-66003019&pub=nwtsty" target="_blank" rel="noopener noreferrer">Revelation 3:14-19</a>
+                        <a href="https://www.jw.org/finder?wtlocale=E&prefer=lang&bible=40006025-40006033&pub=nwtsty" target="_blank" rel="noopener noreferrer">Matthew 6:25-27,31-33</a>
+                    </div>
+                    <div class="notes-area">
+                        <label>Notes:</label>
+                        <textarea placeholder="Write your notes here with Apple Pencil or keyboard..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Takeaways Section -->
+            <div class="key-takeaways">
+                <h3>Key Takeaways</h3>
+                
+                <div class="takeaway-item">
+                    <label style="font-weight: 600; color: #22543d; margin-bottom: 8px; display: block;">Morning Session Highlights:</label>
+                    <textarea placeholder="Write your key takeaways from the morning session..."></textarea>
+                </div>
+
+                <div class="takeaway-item">
+                    <label style="font-weight: 600; color: #22543d; margin-bottom: 8px; display: block;">Afternoon Session Highlights:</label>
+                    <textarea placeholder="Write your key takeaways from the afternoon session..."></textarea>
+                </div>
+
+                <div class="takeaway-item">
+                    <label style="font-weight: 600; color: #22543d; margin-bottom: 8px; display: block;">Personal Application:</label>
+                    <textarea placeholder="How will you apply what you learned?"></textarea>
+                </div>
+
+                <div class="takeaway-item">
+                    <label style="font-weight: 600; color: #22543d; margin-bottom: 8px; display: block;">Follow-Up Actions:</label>
+                    <textarea placeholder="What specific actions will you take based on this program?"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Program Duration:</strong> 9:50 AM - 4:00 PM (with lunch break)</p>
+            <p><strong>Source:</strong> Official program from JW.org</p>
+            <p style="margin-top: 15px; font-size: 0.9em;">This circuit assembly program emphasizes listening to spiritual guidance and remaining faithful, drawn from the messages to the seven congregations in Revelation.</p>
+        </div>
+    </div>
+</body>
+</html>
+
