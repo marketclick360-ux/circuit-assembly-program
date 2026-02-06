@@ -5,6 +5,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 let saveTimeout = null;
 let sessionId = null;
 let statusEl = null;
+let fieldsCache = null;
 
 function getSessionId() {
   const params = new URLSearchParams(window.location.search);
@@ -24,10 +25,16 @@ function getSessionId() {
   return sid;
 }
 
-// FIX: Use index-based keys so each field gets a unique storage key
+function getFields() {
+  if (!fieldsCache) {
+    fieldsCache = document.querySelectorAll('input, textarea');
+  }
+  return fieldsCache;
+}
+
 function collectNotes() {
   const notes = {};
-  document.querySelectorAll('input, textarea').forEach((el, i) => {
+  getFields().forEach((el, i) => {
     const key = 'field_' + i;
     if (el.value && el.value.trim()) {
       notes[key] = el.value;
@@ -36,10 +43,9 @@ function collectNotes() {
   return notes;
 }
 
-// FIX: Use index-based keys to match collectNotes
 function applyNotes(notes) {
   if (!notes || Object.keys(notes).length === 0) return;
-  document.querySelectorAll('input, textarea').forEach((el, i) => {
+  getFields().forEach((el, i) => {
     const key = 'field_' + i;
     if (notes[key]) {
       el.value = notes[key];
@@ -61,7 +67,6 @@ async function saveNotes() {
       }
     );
     const existing = await checkRes.json();
-
     if (existing.length > 0) {
       await fetch(
         `${SUPABASE_URL}/rest/v1/assembly_notes?session_id=eq.${sessionId}`,
@@ -87,10 +92,7 @@ async function saveNotes() {
             'Content-Type': 'application/json',
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({
-            session_id: sessionId,
-            notes: notes
-          })
+          body: JSON.stringify({ session_id: sessionId, notes: notes })
         }
       );
     }
@@ -102,13 +104,11 @@ async function saveNotes() {
   }
 }
 
-// FIX: Added timeout to prevent slow/hanging loads
 async function loadNotes() {
   try {
     showStatus('Loading...');
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-
+    const timeout = setTimeout(() => controller.abort(), 3000);
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/assembly_notes?session_id=eq.${sessionId}&select=notes`,
       {
@@ -120,21 +120,18 @@ async function loadNotes() {
       }
     );
     clearTimeout(timeout);
-
     const data = await res.json();
     if (data.length > 0 && data[0].notes) {
       applyNotes(data[0].notes);
       showStatus('Notes loaded!');
     } else {
-      showStatus('Ready - start typing!');
+      showStatus('Ready!');
     }
     setTimeout(() => showStatus(''), 2000);
   } catch (err) {
     if (err.name === 'AbortError') {
-      console.warn('Load timed out after 5 seconds');
-      showStatus('Load timed out - offline mode');
+      showStatus('Timed out - offline mode');
     } else {
-      console.error('Load error:', err);
       showStatus('Offline mode');
     }
   }
@@ -153,26 +150,25 @@ function showStatus(msg) {
 function createStatusBar() {
   const bar = document.createElement('div');
   bar.id = 'save-status-bar';
-  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#4a5568,#2d3748);color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;font-size:14px;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.3);';
+  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#4a5568,#2d3748);color:white;padding:8px 16px;display:flex;justify-content:space-between;align-items:center;font-size:13px;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.3);';
 
   const left = document.createElement('div');
-  left.innerHTML = '<b>Session:</b> <a href="' + window.location.href + '" style="color:#a3bffa;text-decoration:none;">' + sessionId.substring(0, 20) + '...</a>';
+  left.textContent = 'Session: ' + sessionId.substring(0, 12) + '...';
+  left.style.cssText = 'opacity:0.8;font-size:11px;';
 
   const right = document.createElement('div');
-  right.style.display = 'flex';
-  right.style.alignItems = 'center';
-  right.style.gap = '12px';
+  right.style.cssText = 'display:flex;align-items:center;gap:10px;';
 
   statusEl = document.createElement('span');
-  statusEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:12px;font-size:12px;';
+  statusEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:10px;font-size:11px;';
 
   const shareBtn = document.createElement('button');
-  shareBtn.textContent = 'Copy Share Link';
-  shareBtn.style.cssText = 'background:#667eea;color:white;border:none;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:13px;';
+  shareBtn.textContent = 'Share';
+  shareBtn.style.cssText = 'background:#667eea;color:white;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;';
   shareBtn.onclick = function() {
     navigator.clipboard.writeText(window.location.href).then(() => {
       shareBtn.textContent = 'Copied!';
-      setTimeout(() => { shareBtn.textContent = 'Copy Share Link'; }, 2000);
+      setTimeout(() => { shareBtn.textContent = 'Share'; }, 2000);
     });
   };
 
@@ -181,15 +177,26 @@ function createStatusBar() {
   bar.appendChild(left);
   bar.appendChild(right);
   document.body.appendChild(bar);
-  document.body.style.paddingBottom = '50px';
+  document.body.style.paddingBottom = '45px';
+}
+
+// PERFORMANCE FIX: Use event delegation instead of attaching listeners to every field
+function setupEventDelegation() {
+  document.body.addEventListener('input', function(e) {
+    if (e.target.matches('input, textarea')) {
+      debounceSave();
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   sessionId = getSessionId();
   createStatusBar();
-  loadNotes();
-
-  document.querySelectorAll('input, textarea').forEach(el => {
-    el.addEventListener('input', debounceSave);
-  });
+  setupEventDelegation();
+  // Load notes without blocking render - use requestIdleCallback if available
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => loadNotes());
+  } else {
+    setTimeout(loadNotes, 50);
+  }
 });
