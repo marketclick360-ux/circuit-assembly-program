@@ -428,25 +428,87 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 25px 15px;
+            }
+
             .header h1 {
-                font-size: 1.5em;
+                font-size: 1.3em;
             }
 
-            .session-title {
-                font-size: 1.2em;
-            }
-
-            .content {
-                padding: 25px 20px;
-            }
-
-            .program-table td {
-                padding: 12px 15px;
+            .header .scripture {
                 font-size: 0.95em;
             }
 
+            .session-title {
+                font-size: 1.1em;
+                padding: 12px 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .program-table td {
+                padding: 10px 12px;
+                font-size: 0.9em;
+            }
+
             .program-table td:first-child {
-                width: 70px;
+                width: 55px;
+                font-size: 0.85em;
+            }
+
+            .questions-section,
+            .key-takeaways,
+            .illustration,
+            .symposium {
+                padding: 15px;
+            }
+
+            .questions-section h3,
+            .key-takeaways h3 {
+                font-size: 1.4em;
+            }
+
+            .question-item,
+            .takeaway-item {
+                padding: 15px;
+            }
+
+            .scripture-links a {
+                padding: 6px 10px;
+                font-size: 0.85em;
+            }
+
+            .songs-section {
+                padding: 15px;
+            }
+
+            .talk-notes {
+                min-height: 60px;
+                font-size: 0.9em;
+            }
+
+            .footer {
+                padding: 20px 15px;
+                font-size: 0.85em;
+            }
+
+            #status-bar {
+                font-size: 0.8em;
+                flex-wrap: wrap;
+                gap: 8px;
+                justify-content: center;
             }
         }
     </style>
