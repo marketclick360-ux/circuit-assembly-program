@@ -24,10 +24,11 @@ function getSessionId() {
   return sid;
 }
 
+// FIX: Use index-based keys so each field gets a unique storage key
 function collectNotes() {
   const notes = {};
   document.querySelectorAll('input, textarea').forEach((el, i) => {
-    const key = el.getAttribute('aria-label') || el.placeholder || 'field_' + i;
+    const key = 'field_' + i;
     if (el.value && el.value.trim()) {
       notes[key] = el.value;
     }
@@ -35,10 +36,11 @@ function collectNotes() {
   return notes;
 }
 
+// FIX: Use index-based keys to match collectNotes
 function applyNotes(notes) {
   if (!notes || Object.keys(notes).length === 0) return;
   document.querySelectorAll('input, textarea').forEach((el, i) => {
-    const key = el.getAttribute('aria-label') || el.placeholder || 'field_' + i;
+    const key = 'field_' + i;
     if (notes[key]) {
       el.value = notes[key];
     }
@@ -51,9 +53,15 @@ async function saveNotes() {
   try {
     const checkRes = await fetch(
       `${SUPABASE_URL}/rest/v1/assembly_notes?session_id=eq.${sessionId}&select=id`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        }
+      }
     );
     const existing = await checkRes.json();
+
     if (existing.length > 0) {
       await fetch(
         `${SUPABASE_URL}/rest/v1/assembly_notes?session_id=eq.${sessionId}`,
@@ -79,7 +87,10 @@ async function saveNotes() {
             'Content-Type': 'application/json',
             'Prefer': 'return=minimal'
           },
-          body: JSON.stringify({ session_id: sessionId, notes: notes })
+          body: JSON.stringify({
+            session_id: sessionId,
+            notes: notes
+          })
         }
       );
     }
@@ -91,13 +102,25 @@ async function saveNotes() {
   }
 }
 
+// FIX: Added timeout to prevent slow/hanging loads
 async function loadNotes() {
   try {
     showStatus('Loading...');
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
     const res = await fetch(
       `${SUPABASE_URL}/rest/v1/assembly_notes?session_id=eq.${sessionId}&select=notes`,
-      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+      {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': `Bearer ${SUPABASE_KEY}`
+        },
+        signal: controller.signal
+      }
     );
+    clearTimeout(timeout);
+
     const data = await res.json();
     if (data.length > 0 && data[0].notes) {
       applyNotes(data[0].notes);
@@ -107,8 +130,13 @@ async function loadNotes() {
     }
     setTimeout(() => showStatus(''), 2000);
   } catch (err) {
-    console.error('Load error:', err);
-    showStatus('Offline mode');
+    if (err.name === 'AbortError') {
+      console.warn('Load timed out after 5 seconds');
+      showStatus('Load timed out - offline mode');
+    } else {
+      console.error('Load error:', err);
+      showStatus('Offline mode');
+    }
   }
 }
 
@@ -126,14 +154,18 @@ function createStatusBar() {
   const bar = document.createElement('div');
   bar.id = 'save-status-bar';
   bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#4a5568,#2d3748);color:white;padding:10px 20px;display:flex;justify-content:space-between;align-items:center;font-size:14px;z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.3);';
+
   const left = document.createElement('div');
-  left.innerHTML = '<strong>Session:</strong> <a href="' + window.location.href + '" style="color:#90cdf4;text-decoration:none;">' + sessionId.substring(0, 20) + '...</a>';
+  left.innerHTML = '<b>Session:</b> <a href="' + window.location.href + '" style="color:#a3bffa;text-decoration:none;">' + sessionId.substring(0, 20) + '...</a>';
+
   const right = document.createElement('div');
   right.style.display = 'flex';
   right.style.alignItems = 'center';
   right.style.gap = '12px';
+
   statusEl = document.createElement('span');
   statusEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:12px;font-size:12px;';
+
   const shareBtn = document.createElement('button');
   shareBtn.textContent = 'Copy Share Link';
   shareBtn.style.cssText = 'background:#667eea;color:white;border:none;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:13px;';
@@ -143,6 +175,7 @@ function createStatusBar() {
       setTimeout(() => { shareBtn.textContent = 'Copy Share Link'; }, 2000);
     });
   };
+
   right.appendChild(statusEl);
   right.appendChild(shareBtn);
   bar.appendChild(left);
@@ -155,6 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
   sessionId = getSessionId();
   createStatusBar();
   loadNotes();
+
   document.querySelectorAll('input, textarea').forEach(el => {
     el.addEventListener('input', debounceSave);
   });
