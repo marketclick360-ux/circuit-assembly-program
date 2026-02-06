@@ -32,10 +32,17 @@ function getFields() {
   return fieldsCache;
 }
 
+// FIX: Use placeholder text as unique key so each field saves/loads independently
+function getFieldKey(el, i) {
+  if (el.getAttribute('data-key')) return el.getAttribute('data-key');
+  if (el.placeholder) return 'ph_' + el.placeholder.substring(0, 40).replace(/\s+/g, '_');
+  return 'field_' + i;
+}
+
 function collectNotes() {
   const notes = {};
   getFields().forEach((el, i) => {
-    const key = 'field_' + i;
+    const key = getFieldKey(el, i);
     if (el.value && el.value.trim()) {
       notes[key] = el.value;
     }
@@ -46,7 +53,7 @@ function collectNotes() {
 function applyNotes(notes) {
   if (!notes || Object.keys(notes).length === 0) return;
   getFields().forEach((el, i) => {
-    const key = 'field_' + i;
+    const key = getFieldKey(el, i);
     if (notes[key]) {
       el.value = notes[key];
     }
@@ -193,7 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
   sessionId = getSessionId();
   createStatusBar();
   setupEventDelegation();
-  // Load notes without blocking render - use requestIdleCallback if available
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => loadNotes());
   } else {
