@@ -58,6 +58,8 @@ function applyNotes(notes) {
       el.value = notes[key];
     }
   });
+  // Auto-expand all textareas after loading notes
+  document.querySelectorAll('textarea').forEach(autoExpandTextarea);
 }
 
 async function saveNotes() {
@@ -154,6 +156,12 @@ function showStatus(msg) {
   if (statusEl) statusEl.textContent = msg;
 }
 
+// Auto-expand textarea to fit all content
+function autoExpandTextarea(textarea) {
+  textarea.style.height = 'auto';
+  textarea.style.height = textarea.scrollHeight + 'px';
+}
+
 function createStatusBar() {
   const bar = document.createElement('div');
   bar.id = 'save-status-bar';
@@ -169,6 +177,23 @@ function createStatusBar() {
   statusEl = document.createElement('span');
   statusEl.style.cssText = 'background:rgba(255,255,255,0.15);padding:3px 10px;border-radius:10px;font-size:11px;';
 
+  // PDF Export Button
+  const pdfBtn = document.createElement('button');
+  pdfBtn.textContent = 'Export PDF';
+  pdfBtn.style.cssText = 'background:#10b981;color:white;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;';
+  pdfBtn.onclick = function() {
+    // Expand all textareas fully before printing
+    document.querySelectorAll('textarea').forEach(function(ta) {
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+      ta.style.overflow = 'visible';
+    });
+    // Small delay to let DOM update, then print
+    setTimeout(function() {
+      window.print();
+    }, 300);
+  };
+
   const shareBtn = document.createElement('button');
   shareBtn.textContent = 'Share';
   shareBtn.style.cssText = 'background:#667eea;color:white;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;';
@@ -180,6 +205,7 @@ function createStatusBar() {
   };
 
   right.appendChild(statusEl);
+  right.appendChild(pdfBtn);
   right.appendChild(shareBtn);
   bar.appendChild(left);
   bar.appendChild(right);
@@ -192,6 +218,10 @@ function setupEventDelegation() {
   document.body.addEventListener('input', function(e) {
     if (e.target.matches('input, textarea')) {
       debounceSave();
+      // Auto-expand textarea as user types
+      if (e.target.tagName === 'TEXTAREA') {
+        autoExpandTextarea(e.target);
+      }
     }
   });
 }
@@ -200,6 +230,8 @@ document.addEventListener('DOMContentLoaded', function() {
   sessionId = getSessionId();
   createStatusBar();
   setupEventDelegation();
+  // Initial auto-expand for all textareas
+  document.querySelectorAll('textarea').forEach(autoExpandTextarea);
   if ('requestIdleCallback' in window) {
     requestIdleCallback(() => loadNotes());
   } else {
