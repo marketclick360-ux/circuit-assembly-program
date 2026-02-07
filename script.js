@@ -208,6 +208,22 @@ function createStatusBar() {
   right.appendChild(pdfBtn);
   right.appendChild(shareBtn);
   bar.appendChild(left);
+  // Dark Mode Toggle Button
+  const darkBtn = document.createElement('button');
+  darkBtn.textContent = localStorage.getItem('dark_mode') === 'true' ? '☀️ Light' : '🌙 Dark';
+  darkBtn.style.cssText = 'background:#4a5568;color:white;border:none;padding:5px 14px;border-radius:6px;cursor:pointer;font-size:12px;';
+  darkBtn.onclick = function() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('dark_mode', isDark);
+    darkBtn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  };
+  // Apply saved dark mode preference on load
+  if (localStorage.getItem('dark_mode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+    right.appendChild(darkBtn);
+
   bar.appendChild(right);
   document.body.appendChild(bar);
   document.body.style.paddingBottom = '45px';
