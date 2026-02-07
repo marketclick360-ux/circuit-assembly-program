@@ -32,10 +32,10 @@ function getFields() {
   return fieldsCache;
 }
 
-// FIX: Use placeholder text as unique key so each field saves/loads independently
+// FIX: Use field index as unique key so each field saves/loads independently
 function getFieldKey(el, i) {
   if (el.getAttribute('data-key')) return el.getAttribute('data-key');
-  if (el.placeholder) return 'ph_' + el.placeholder.substring(0, 40).replace(/\s+/g, '_');
+  // Always use index for unique keys (placeholders can be duplicated)
   return 'field_' + i;
 }
 
